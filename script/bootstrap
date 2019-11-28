@@ -26,29 +26,6 @@ fail () {
   exit
 }
 
-setup_gitconfig () {
-  if ! [ -f git/gitconfig.local.symlink ]
-  then
-    info 'setup gitconfig'
-
-    git_credential='cache'
-    if [ "$(uname -s)" == "Darwin" ]
-    then
-      git_credential='osxkeychain'
-    fi
-
-    user ' - What is your github author name?'
-    read -e git_authorname
-    user ' - What is your github author email?'
-    read -e git_authoremail
-
-    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
-
-    success 'gitconfig'
-  fi
-}
-
-
 link_file () {
   local src=$1 dst=$2
 
@@ -124,29 +101,9 @@ link_file () {
   fi
 }
 
-install_dotfiles () {
-  info 'installing dotfiles'
-
-  local overwrite_all=false backup_all=false skip_all=false
-
-  local file_lst=$(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' \
-        -not \( -path '*.git*' -o -path '*tmp*' \) )
-  # for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not \( -path '*.git*' -o -path '*tmp*' \) )
-  # for src in $(find -H "$DOTFILES_ROOT" -name '*.symlink' -type d \( -path '*.git*' -o -path '*tmp*' \) -prune -o -print )
-  for src in ${file_lst}; do
-    echo "src: "$src
-    dst="$HOME/.$(basename "${src%.*}")"
-    echo "dst: "$dst
-    # link_file "$src" "$dst"
-  done
-}
 
 
 
-# 获取平台类型，mac还是linux平台
-function get_platform_type() {
-    echo $(uname)
-}
 
 # 获取日期
 function get_datetime() {
@@ -174,17 +131,7 @@ function is_exist_dir() {
     fi
 }
 
-# 安装mac平台必备软件
-function install_prepare_software_on_mac() {
-    xcode-select --install
 
-    brew install vim gcc cmake ctags-exuberant ack
-
-    macos1014=$(is_macos1014)
-    if [ $macos1014 == 1 ]; then
-        open /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
-    fi
-}
 
 # 拷贝文件
 function copy_files() {
@@ -224,6 +171,7 @@ function print_logo()
     color="$(tput setaf 6)"
     normal="$(tput sgr0)"
     printf "${color}"
+    echo "----------------------------------------------------------------------"
     echo '        __                __           '
     echo '__   __/_/___ ___  ____  / /_  _______ '
     echo '\ \ / / / __ `__ \/ __ \/ / / / / ___/ '
@@ -238,10 +186,130 @@ function print_logo()
     printf "${normal}"
 }
 
-# 在mac平台安装vimplus
-function install_dotfiles_on_mac() {
-    echo "entering install_dotfiles_on_mac()"
+install_dotfiles () {
+    echo "----------------------------------------------------------------------"
+    echo "Entering: install_dotfiles......"
+    info 'installing dotfiles'
+
+    local overwrite_all=false backup_all=false skip_all=false
+
+    local file_lst=$(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' \
+          -not \( -path '*.git*' -o -path '*tmp*' \) )
+    # for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not \( -path '*.git*' -o -path '*tmp*' \) )
+    # for src in $(find -H "$DOTFILES_ROOT" -name '*.symlink' -type d \( -path '*.git*' -o -path '*tmp*' \) -prune -o -print )
+    for src in ${file_lst}; do
+      echo "src: "$src
+      dst="$HOME/.$(basename "${src%.*}")"
+      echo "dst: "$dst
+      # link_file "$src" "$dst"
+    done
+    echo "Exiting: install_dotfiles......"
+}
+
+#Install oh-my-zsh
+install_ohmyzsh_on_mac () {
+    echo "----------------------------------------------------------------------"
+    echo "Entering: install_ohmyzsh_on_mac......"
+    if [ ! -d ~/.oh-my-zsh ]; then
+        info '  Installing oh-my-zsh for you'
+        curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+    else
+        echo "oh-my-zsh already installed......"
+    fi
+    echo "Exiting: install_ohmyzsh_on_mac......"
+}
+
+setup_gitconfig () {
+  if ! [ -f git/gitconfig.local.symlink ]
+  then
+    info 'setup gitconfig'
+
+    git_credential='cache'
+    if [ "$(uname -s)" == "Darwin" ]
+    then
+      git_credential='osxkeychain'
+    fi
+
+    user ' - What is your github author name?'
+    read -e git_authorname
+    user ' - What is your github author email?'
+    read -e git_authoremail
+
+    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
+
+    success 'gitconfig'
+  fi
+}
+
+install_git () {
+    echo "entering: install_git......"
+    if test ! $(which git); then 
+        echo "Installing git for you......"
+        brew install git
+    else
+        echo "git already installed......"
+    fi
+}
+
+install_homebrew () {
+    echo "entering: install_homebrew......"
+    if test ! $(which brew); then
+        echo "Installing Homebrew for you..."
+        # Install the correct homebrew for each OS type
+        if test "$(uname)" = "Darwin"; then
+            ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        elif test "$(expr substr $(uname -s) 1 5)" = "Linux"; then
+            ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
+        fi
+    else
+        echo "Homebrew already installed......"
+    fi
+}
+
+install_xcode_clt () {
+    if xcode-select --install 2>&1 | grep installed; then
+        echo xcode CLT already installed;
+    else
+        echo xcode CLT installing;
+    fi
+
+}
+
+# Install prerequisite software for vimplus
+function install_prerequisite_software_on_mac() {
+    echo "----------------------------------------------------------------------"
+    echo "Entering: install_prerequisite_software_on_mac..."
+    ## Install prerequisite software for vimplus
+    ### To install homebrew, we need to nstall Command Line Tools (CLT) for Xcode
+    install_xcode_clt
+    install_homebrew 
+    # brew install git
+    install_git
     # setup_gitconfig
+    # brew install vim gcc cmake ctags-exuberant ack
+
+    # macos1014=$(is_macos1014)
+    # if [ $macos1014 == 1 ]; then
+    #     open /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
+    # fi
+    echo "Exiting: install_prerequisite_software_on_mac..."
+}
+
+# The install workflow on mac
+function installation_workflow_on_mac() {
+    echo "**********************************************************************"
+    echo "entering: installation_workflow_on_mac..."
+    install_prerequisite_software_on_mac
+    #--------start(install ohmyzsh)---------------------------------------------
+    ##To install ohmyzsh, only curl is required
+    install_ohmyzsh_on_mac
+    #-------- end (install ohmyzsh)---------------------------------------------
+
+    #--------start(install vimplus)---------------------------------------------
+    # To install vimplus, it's required to install brew & git first
+    # install_vimplus_on_mac
+    #-------- end (install vimplus)---------------------------------------------
+
     install_dotfiles
     # backup_vimrc_and_vim
     # install_prepare_software_on_mac
@@ -249,13 +317,19 @@ function install_dotfiles_on_mac() {
     # install_fonts_on_mac
     # install_ycm
     # install_vim_plugin
-    print_logo
     # info "installing dependencies"
+
     # if source bin/dot | while read -r data; do info "$data"; done; then
     #   success "dependencies installed"
     # else
     #   fail "error installing dependencies"
     # fi
+    print_logo
+}
+
+# retrieve the platform type(mac/linux)
+function get_platform_type() {
+    echo $(uname)
 }
 
 # obtain current time
@@ -273,7 +347,7 @@ function main() {
     echo "Platform type: "${type}
     if [ ${type} == "Darwin" ]; then
         echo "entering macos system"
-        install_dotfiles_on_mac
+        installation_workflow_on_mac
     elif [ ${type} == "Linux" ]; then
         echo "linux"
         # install_vimplus_on_linux
