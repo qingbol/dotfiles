@@ -1,0 +1,13 @@
+$pdf_mode = 5;
+$dvi_mode = $postscript_mode = 0;
+
+$xelatex = "xelatex -file-line-error -halt-on-error -interaction=nonstopmode -no-pdf -synctex=1 %O %S";
+$pdflatex = "pdflatex -file-line-error -halt-on-error -interaction=nonstopmode -synctex=1 %O %S";
+$xdvipdfmx = "xdvipdfmx -E -o %D %O %S";
+
+$out_dir = "build";
+#$out_dir = "latex.out";
+
+$cleanup_mode = 2;
+@generated_exts = (@generated_exts, 'synctex.gz');
+$clean_ext = "hd nav snm synctex.gz xdv";
