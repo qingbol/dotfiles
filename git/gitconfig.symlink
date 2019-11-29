@@ -1,17 +1,18 @@
+[include]
+    path = ~/.gitconfig.local
 [http]
 [https]
-[user]
-	name = qingbol
-	email = qingbol@g.clemson.edu
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
 [merge]
-	conflictstyle = diff3
-	defaultToUpstream = true
+    conflictstyle = diff3
+    defaultToUpstream = true
 [pager]
-	branch = false
+    branch = false
 [core]
-	pager = cat
+    pager = cat
+    excludesfile = ~/.gitignore
+    editor = vim
