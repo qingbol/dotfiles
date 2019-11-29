@@ -26,8 +26,6 @@ fail () {
   exit
 }
 
-
-
 # 判断文件是否存在
 function is_exist_file() {
     filename=$1
@@ -47,8 +45,6 @@ function is_exist_dir() {
         echo 0
     fi
 }
-
-
 
 # 拷贝文件
 function copy_files() {
@@ -187,6 +183,15 @@ install_ohmyzsh_on_mac () {
     echo "Exiting: install_ohmyzsh_on_mac......"
 }
 
+chang_shell_to_zsh () {
+    if [[ -n "$ZSH_VERSION" ]]; then
+        echo "changing shell to zsh"
+        chsh -s $(which zsh)
+    else 
+        echo "The shell already is zsh"
+    fi
+}
+
 setup_gitconfig () {
   if ! [ -f git/gitconfig.local.symlink ]
   then
@@ -253,6 +258,7 @@ function install_prerequisite_software_on_mac() {
     install_homebrew 
     # brew install git
     install_git
+    chang_shell_to_zsh
     # setup_gitconfig
     # brew install vim gcc cmake ctags-exuberant ack
 
