@@ -4,29 +4,27 @@
 
 cd "$(dirname "$0")/.."
 DOTFILES_ROOT=$(pwd -P)
-
 set -e
 
-
 info () {
-  printf "\r  [ \033[00;34m..\033[0m ] $1\n"
+    printf "\r  [ \033[00;34m..\033[0m ] $1\n"
 }
 
 user () {
-  printf "\r  [ \033[0;33m??\033[0m ] $1\n"
+    printf "\r  [ \033[0;33m??\033[0m ] $1\n"
 }
 
 success () {
-  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+    printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
 }
 
 fail () {
-  printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
-  echo ''
-  exit
+    printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
+    echo ''
+    exit
 }
 
-# 判断文件是否存在
+# detect exist of files
 function is_exist_file() {
     filename=$1
     if [ -f $filename ]; then
@@ -36,7 +34,7 @@ function is_exist_file() {
     fi
 }
 
-# 判断目录是否存在
+# detect exist of directory
 function is_exist_dir() {
     dir=$1
     if [ -d $dir ]; then
@@ -46,32 +44,8 @@ function is_exist_dir() {
     fi
 }
 
-# 拷贝文件
-function copy_files() {
-    rm -rf ~/.vimrc
-    ln -s ${PWD}/.vimrc ~
 
-    rm -rf ~/.vimrc.custom.plugins
-    cp ${PWD}/.vimrc.custom.plugins ~
-
-    rm -rf ~/.vimrc.custom.config
-    cp ${PWD}/.vimrc.custom.config ~
-
-    rm -rf ~/.ycm_extra_conf.py
-    ln -s ${PWD}/.ycm_extra_conf.py ~
-
-    mkdir ~/.vim
-    rm -rf ~/.vim/colors
-    ln -s ${PWD}/colors ~/.vim
-
-    rm -rf ~/.vim/ftplugin
-    ln -s ${PWD}/ftplugin ~/.vim
-
-    rm -rf ~/.vim/autoload
-    ln -s ${PWD}/autoload ~/.vim
-}
-
-# 安装mac平台字体
+# install fonts
 function install_fonts_on_mac()
 {
     rm -rf ~/Library/Fonts/Droid\ Sans\ Mono\ Nerd\ Font\ Complete.otf
@@ -85,18 +59,25 @@ function print_logo()
     normal="$(tput sgr0)"
     printf "${color}"
     echo "----------------------------------------------------------------------"
-    echo '        __                __           '
-    echo '__   __/_/___ ___  ____  / /_  _______ '
-    echo '\ \ / / / __ `__ \/ __ \/ / / / / ___/ '
-    echo ' \ V / / / / / / / /_/ / / /_/ (__  )  '
-    echo '  \_/_/_/ /_/ /_/ ,___/_/\____/____/   '
-    echo '               /_/                     ...is now installed!'
-    echo ''
-    echo ''
+    echo "██████╗  ██████╗ ████████╗███████╗██╗██╗     ███████╗███████╗"
+    echo "██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝██║██║     ██╔════╝██╔════╝"
+    echo "██║  ██║██║   ██║   ██║   █████╗  ██║██║     █████╗  ███████╗"
+    echo "██║  ██║██║   ██║   ██║   ██╔══╝  ██║██║     ██╔══╝  ╚════██║"
+    echo "██████╔╝╚██████╔╝   ██║   ██║     ██║███████╗███████╗███████║"
+    echo "╚═════╝  ╚═════╝    ╚═╝   ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝"
+    echo ""      
+    echo '                                    ...is now installed!'
+    # echo ''
     echo 'Just enjoy it!'
     echo 'p.s. Follow me at https://github.com/qingbol/dotfiles'
     echo ''
     printf "${normal}"
+}
+
+# obatin date
+function get_datetime() {
+    time=$(date "+%Y%m%d%H%M%S")
+    echo $time
 }
 
 link_file () {
@@ -136,8 +117,9 @@ link_file () {
             success "removed $dst"
         fi
         if [ "$backup" == "true" ]; then
-            mv "$dst" "${dst}.backup"
-            success "moved $dst to ${dst}.backup"
+            time=$(get_datetime)
+            mv "$dst" "${dst}_${time}.backup"
+            success "moved $dst to ${dst}_${time}.backup"
         fi
         if [ "$skip" == "true" ]; then
             success "skipped $src"
@@ -158,16 +140,31 @@ install_dotfiles () {
     local overwrite_all=false backup_all=false skip_all=false
 
     local file_lst=$(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' \
-          -not \( -path '*.git*' -o -path '*tmp*' \) )
+            -not \( -path '*.git*' -o -path '*tmp*' \) )
     # for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not \( -path '*.git*' -o -path '*tmp*' \) )
     # for src in $(find -H "$DOTFILES_ROOT" -name '*.symlink' -type d \( -path '*.git*' -o -path '*tmp*' \) -prune -o -print )
     for src in ${file_lst}; do
-      echo "src: "$src
-      dst="$HOME/.$(basename "${src%.*}")"
-      echo "dst: "$dst
-      link_file "$src" "$dst"
+        echo "src: "$src
+        dst="$HOME/.$(basename "${src%.*}")"
+        echo "dst: "$dst
+        link_file "$src" "$dst"
     done
     echo "Exiting: install_dotfiles......"
+}
+
+#Install vimplus
+function install_vimplus_on_mac () {
+    echo "----------------------------------------------------------------------"
+    echo "Entering: install_vimplus_on_mac......"
+    if [ ! -d ~/.vimplus ]; then
+        info '  Installing vimplus for you'
+        git clone https://github.com/chxuan/vimplus.git ~/.vimplus
+        . ~/.vimplus/install.sh
+    else
+        echo "vimplus already installed......"
+    fi
+    echo "Exiting: install_vimplus_on_mac......"
+
 }
 
 #Install oh-my-zsh
@@ -193,25 +190,28 @@ chang_shell_to_zsh () {
 }
 
 setup_gitconfig () {
-  if ! [ -f git/gitconfig.local.symlink ]
-  then
-    info 'setup gitconfig'
-
-    git_credential='cache'
-    if [ "$(uname -s)" == "Darwin" ]
+    if ! [ -f git/gitconfig.local.symlink ]
     then
-      git_credential='osxkeychain'
+        info 'setup gitconfig'
+
+        git_credential='cache'
+        if [ "$(uname -s)" == "Darwin" ]
+        then
+        git_credential='osxkeychain'
+        fi
+
+        user ' - What is your github author name?'
+        read -e git_authorname
+        user ' - What is your github author email?'
+        read -e git_authoremail
+
+        sed -e "s/AUTHORNAME/$git_authorname/g" \
+            -e "s/AUTHOREMAIL/$git_authoremail/g" \
+            -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" \
+            git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
+
+        success 'gitconfig'
     fi
-
-    user ' - What is your github author name?'
-    read -e git_authorname
-    user ' - What is your github author email?'
-    read -e git_authoremail
-
-    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
-
-    success 'gitconfig'
-  fi
 }
 
 install_git () {
@@ -281,35 +281,40 @@ function installation_workflow_on_mac() {
 
     #--------start(install vimplus)---------------------------------------------
     # To install vimplus, it's required to install brew & git first
-    # install_vimplus_on_mac
+    install_vimplus_on_mac
     #-------- end (install vimplus)---------------------------------------------
 
-    install_dotfiles
-    # backup_vimrc_and_vim
-    # install_prepare_software_on_mac
-    # copy_files
-    # install_fonts_on_mac
-    # install_ycm
-    # install_vim_plugin
-    # info "installing dependencies"
+    #--------start(Install fonts)-----------------------------------------------
+    # install_fonts
+    #-------- end (Install fonts)-----------------------------------------------
 
+    #--------start(Link dotfiles)-----------------------------------------------
+    install_dotfiles
+    #-------- end (Link dotfiles)-----------------------------------------------
+
+    #--------start(brew install apps)-------------------------------------------
+    # brew bundle
+    #-------- end (brew install apps)-------------------------------------------
+
+    #--------start(MacOS configuration)-----------------------------------------
+    # macos_config
+    #-------- end (MacOS configuration)-----------------------------------------
+
+
+    #--------start(other configuration)-----------------------------------------
+    # info "installing dependencies"
     # if source bin/dot | while read -r data; do info "$data"; done; then
     #   success "dependencies installed"
     # else
     #   fail "error installing dependencies"
     # fi
+    #-------- end (other configuration)-----------------------------------------
     print_logo
 }
 
 # retrieve the platform type(mac/linux)
 function get_platform_type() {
     echo $(uname)
-}
-
-# obatin date
-function get_datetime() {
-    time=$(date "+%Y%m%d%H%M%S")
-    echo $time
 }
 
 # obtain current time
@@ -336,9 +341,9 @@ function main() {
     fi
 
     end=`get_now_timestamp`
-    # second=`expr ${end} - ${begin}`
-    # min=`expr ${second} / 60`
-    # echo "It takes "${min}" minutes."
+    second=`expr ${end} - ${begin}`
+    min=`expr ${second} / 60`
+    echo "It takes "${min}" minutes."
     echo ''
     echo "All installed"
 }
