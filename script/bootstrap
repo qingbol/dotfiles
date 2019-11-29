@@ -4,6 +4,8 @@
 
 cd "$(dirname "$0")/.."
 DOTFILES_ROOT=$(pwd -P)
+# DOTFILES_ROOT="~/.dotfiles"
+echo ${DOTFILES_ROOT}
 set -e
 
 info () {
@@ -256,11 +258,9 @@ function install_prerequisite_software_on_mac() {
     ### To install homebrew, we need to nstall Command Line Tools (CLT) for Xcode
     install_xcode_clt
     install_homebrew 
-    # brew install git
     install_git
-    chang_shell_to_zsh
     # setup_gitconfig
-    # brew install vim gcc cmake ctags-exuberant ack
+    chang_shell_to_zsh
 
     # macos1014=$(is_macos1014)
     # if [ $macos1014 == 1 ]; then

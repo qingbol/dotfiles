@@ -42,3 +42,4 @@ alias mysql="/Applications/MAMP/Library/bin/mysql"
 alias mvim="/Applications/MacVim.app/Contents/MacOS/MacVim"
 
 alias dot="~/.dotfiles"
+alias installdot=~/.dotfiles/script/bootstrap
