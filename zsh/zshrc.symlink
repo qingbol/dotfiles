@@ -1,36 +1,27 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block, everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 export TERM="xterm-256color"
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-#-------------------start(for oh-my-zsh)------------------------------------
+#-------------------start(for oh-my-zsh)----------------------------------------
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/tarus/.oh-my-zsh
 
+source ~/.fonts/*.sh
+
+#========start(theme setthing)==================================================
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 #ZSH_THEME="robbyrussell"
 #ZSH_THEME="agnoster"
 #ZSH_THEME="AgnosterZak"
-
-##source the font maps of awesome-terminal-fonts
-##https://github.com/gabrielelana/awesome-terminal-fonts
-##set powerlevel9k theme
-source ~/.fonts/*.sh
-# POWERLEVEL9K_MODE='awesome-fontconfig'
-POWERLEVEL9K_MODE='nerdfont-complete'
-# POWERLEVEL9K_MODE='awesome-mapped-fontconfig'
-ZSH_THEME="powerlevel9k/powerlevel9k"
-# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda context dir)
-# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda context dir vcs)
-# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda context dir newline vcs)
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda context vcs newline dir)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history time)
-# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history newline time)
-POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-# POWERLEVEL9K_RPROMPT_ON_NEWLINE=true
-# POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="↱"
-# POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="↳ "
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -39,6 +30,40 @@ POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 # An empty array have no effect
 # ZSH_THEME="random"
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+#************start(POWERLEVEL9K)************************************************
+##source the font maps of awesome-terminal-fonts
+##https://github.com/gabrielelana/awesome-terminal-fonts
+##set powerlevel9k theme
+# POWERLEVEL9K_MODE='awesome-fontconfig'
+# POWERLEVEL9K_MODE='nerdfont-complete'
+# POWERLEVEL9K_MODE='awesome-mapped-fontconfig'
+# ZSH_THEME="powerlevel9k/powerlevel9k"
+# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda context dir)
+# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda context dir vcs)
+# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda context dir newline vcs)
+# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda context vcs newline dir)
+# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history time)
+# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history newline time)
+# POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+# POWERLEVEL9K_RPROMPT_ON_NEWLINE=true
+# POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="↱"
+# POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="↳ "
+##############below is chosed setting for powerlevel9k#######
+# POWERLEVEL9K_MODE='nerdfont-complete'
+# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(anaconda context vcs newline dir)
+# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history time)
+# POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+#************ end (POWERLEVEL9K)************************************************
+
+#************start(POWERLEVEL10K)************************************************
+ZSH_THEME="powerlevel10k/powerlevel10k"
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+#************ end (POWERLEVEL10K)************************************************
+
+
+#========start(theme setthing)==================================================
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -90,6 +115,7 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
+#------------------- end (for oh-my-zsh)----------------------------------------
 
 
 #-------------------start(for original)------------------------------------
@@ -166,3 +192,8 @@ zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search # Up
 bindkey "^[[B" down-line-or-beginning-search # Down
 #------------------- end (for dotfiles)------------------------------------
+
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/tarus/.sdkman"
+[[ -s "/Users/tarus/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/tarus/.sdkman/bin/sdkman-init.sh"

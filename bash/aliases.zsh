@@ -4,11 +4,15 @@ alias 8270="cd ~/TarusHome/10SrcFldr/CPSC8270TOPL"
 alias 6050="cd ~/TarusHome/10SrcFldr/CPSC6050CG"
 alias 6620="cd ~/TarusHome/10SrcFldr/CPSC6620DB"
 alias www="cd ~/TarusHome/10SrcFldr/www"
+alias lemna="cd /Users/tarus/TarusHome/11git_repo/CpSc8580Lemna_fuction_type"
 
 #clemson courses document directories
 alias topl="cd /Users/tarus/TarusHome/16ClmsCrs/CPSC8270TOPL"
 alias cg="cd /Users/tarus/TarusHome/16ClmsCrs/CPSC6050CG"
 alias db="cd /Users/tarus/TarusHome/16ClmsCrs/CPSC6620DB"
+alias cppprimer="cd /Users/tarus/TarusHome/10SrcFldr/1005Cpp/CppPrimerPlus_test"
+alias cpptest="cd /Users/tarus/TarusHome/10SrcFldr/1005Cpp/test"
+alias javatest="/Users/tarus/TarusHome/10SrcFldr/1008java"
 
 #brew 安装的python，设定快捷键。
 alias brewpy2="/usr/local/Cellar/python@2/2.7.15_1/bin/python"
@@ -25,6 +29,8 @@ alias github="cd ~/TarusHome/11git_repo"
 
 #embedding
 alias embed="cd /Users/tarus/TarusHome/10SrcFldr/CpSc8580EKLAVYA_py27/code/embedding"
+alias javahome="/Users/tarus/.sdkman/candidates/java/current"
+
 
 #编译器改为gcc@配置
 #alias gcc='gcc-4.7'
